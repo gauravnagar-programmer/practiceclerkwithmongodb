@@ -9,9 +9,14 @@ export async function POST(req) {
 
   const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
 
-  try {
-    const evt = wh.verify(payload, headers);
+  const svixHeader = {
+    'svix-id': headers.get('svix-id'),
+    'svix-timestamp': headers.get('svix-timestamp'),
+    'svix-signature': headers.get('svix-signature'),  
+  }
 
+  try {
+    const evt = wh.verify(payload, svixHeader);
     if (evt.type === 'user.created') {
       const { id, email_addresses, first_name, last_name } = evt.data;
       
